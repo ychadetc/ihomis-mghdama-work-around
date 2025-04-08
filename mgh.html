@@ -10,9 +10,12 @@
 
 <body>
 
+  <h1>MayGo Home Beybe</h1>
+
 <table id="mghTable" class="table table-striped table-bordered">
   <thead>
       <tr>
+          <th>Health rec no.</th>
           <th>Fullname</th>
           <th>Date of MGH</th>
          
@@ -21,7 +24,25 @@
   <tbody id="mghBody">
 
   </tbody>
-</table>
+</table><br>
+
+<h1>Expired DAMA beybe</h1>
+
+<table id="disTable" class="table table-striped table-bordered">
+  <thead>
+      <tr>
+          <th>Health rec no.</th>
+          <th>Fullname</th>
+          <th>Date of Disposition</th>
+          <th>Disposition</th>
+         
+      </tr>
+  </thead>
+  <tbody id="disBody">
+
+  </tbody>
+</table><br>
+
 
 </body>
 
@@ -31,9 +52,12 @@
   $(document).ready(function() {
       var mghList = [];
 
+
+      var disList = [];
+
       $.ajax({
         type: "GET",
-        url: "http://localhost:8000/MGH", // Your server endpoint URL
+        url: "http://192.168.250.30:8000/MGH", // Your server endpoint URL
         success: function(data) {
           const jsonData = data.mghData // Parse the JSON string
 
@@ -46,13 +70,14 @@
 
             var Fullname = mghList[i].Fullname;
             var dateMGH = mghList[i].dateMGH;
+            var hrn = mghList[i].healthno;
 			
-			console.log(dateMGH);
+			
            
 
             var data_mgh = `
             <tr>
-
+              <td>${hrn}</td>
               <td>${Fullname}</td>
               <td>${dateMGH}</td>
              
@@ -65,13 +90,76 @@
          
           }
 
-          var roomView = new DataTable("#mghTable");
+          var dataView = new DataTable("#mghTable");
         },
         error: function(xhr, status, err) {
           console.error('Error:', err);
         }
       });
+
+
+
+
+
+      
+
+$.ajax({
+  type: "GET",
+  url: "http://192.168.250.30:8000/dispo", // Your server endpoint URL
+  success: function(data1) {
+    const jsonData = data1.disData // Parse the JSON string
+
+    $.each(jsonData, function(index, dis) {
+      disList.push(dis);
     });
+
+    // Display the villa list in a loop using HTML
+    for (var i = 0; i < disList.length; i++) {
+
+      var fullname = disList[i].fullname;
+      var DateDisposition = disList[i].DateDisposition;
+      var dispcode = disList[i].dispcode;
+      var hrn = disList[i].healthno;
+
+
+     
+
+      var data_dis = `
+      <tr>
+        <td>${hrn}</td>
+        <td>${fullname}</td>
+        <td>${DateDisposition}</td>
+        <td>${dispcode}</td>
+       
+        
+      </tr>
+      
+      `;
+
+      $('#disBody').append(data_dis);
+   
+    }
+
+    var roomView = new DataTable("#disTable");
+  },
+  error: function(xhr, status, err) {
+    console.error('Error:', err);
+  }
+
+
+});
+
+    
+    
+    
+    
+     });
+
+
+
+
+
+
 </script>
 
 </html>
